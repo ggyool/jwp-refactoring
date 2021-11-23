@@ -3,10 +3,10 @@
     - [ ] Product, Menu, MenuGroup, MenuProduct
     - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] 도메인 Entity 로 변경
-  - [ ] Product, Menu, MenuGroup, MenuProduct
+  - [x] Product, Menu, MenuGroup, MenuProduct
   - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] 엔티티에 Builder 추가
-  - [ ] Product, Menu, MenuGroup, MenuProduct
+  - [x] Product, Menu, MenuGroup, MenuProduct
   - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] Request 객체 생성
 - [ ] Response 객체 생성
