@@ -8,10 +8,11 @@
 - [ ] 엔티티에 Builder 추가
   - [x] Product, Menu, MenuGroup, MenuProduct
   - [ ] Order, OrderLineItem, OrderTable, TableGroup
-- [ ] Request 객체 생성
-- [ ] Response 객체 생성
-- [ ] RestController 리팩터링
-  - [ ] MenuGroupRestController, MenuRestController, ProductRestController
-  - [ ] OrderRestController, TableGroupRestController, TableRestController
-- [ ] IntegrationTest 리팩터링 
+- [ ] RestController 리팩터링 / Request 생성 / Response 생성
+  - [x] MenuGroup
+  - [ ] Product
+  - [ ] MenuRest
+  - [ ] Order
+  - [ ] TableGroup
+  - [ ] Table
 - [ ] 엔티티에 setter 제거
