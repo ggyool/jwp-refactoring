@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import static kitchenpos.testutils.TestDomainBuilder.menuGroupBuilder;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
@@ -25,15 +24,15 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        MenuGroup newMenuGroup = menuGroupBuilder().name("두마리메뉴").build();
+        MenuGroup newMenuGroup = MenuGroup.builder()
+                .name("두마리메뉴")
+                .build();
 
         // when
         menuGroupService.create(newMenuGroup);
 
         // then
-        then(menuGroupDao)
-                .should(times(1))
-                .save(newMenuGroup);
+        then(menuGroupDao).should(times(1)).save(newMenuGroup);
     }
 
     @DisplayName("전체 메뉴 그룹 리스트를 가져온다.")
@@ -43,8 +42,6 @@ class MenuGroupServiceTest {
         menuGroupService.list();
 
         // then
-        then(menuGroupDao)
-                .should(times(1))
-                .findAll();
+        then(menuGroupDao).should(times(1)).findAll();
     }
 }

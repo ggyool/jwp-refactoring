@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import java.math.BigDecimal;
 import java.util.stream.Stream;
 
-import static kitchenpos.testutils.TestDomainBuilder.productBuilder;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
@@ -33,7 +32,7 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        Product newProduct = productBuilder()
+        Product newProduct = Product.builder()
                 .name("공짜 상품")
                 .price(BigDecimal.valueOf(0))
                 .build();
@@ -42,9 +41,7 @@ class ProductServiceTest {
         productService.create(newProduct);
 
         // then
-        then(productDao)
-                .should(times(1))
-                .save(newProduct);
+        then(productDao).should(times(1)).save(newProduct);
     }
 
     @DisplayName("상품 생성에 실패한다 - 가격은 null 이거나 음수일 수 없다.")
@@ -52,7 +49,7 @@ class ProductServiceTest {
     @ParameterizedTest
     void createWithInvalidPrice(BigDecimal price) {
         // given
-        Product newProduct = productBuilder()
+        Product newProduct = Product.builder()
                 .name("유효하지 않은 가격의 상품")
                 .price(price)
                 .build();
@@ -79,9 +76,7 @@ class ProductServiceTest {
         productService.list();
 
         // then
-        then(productDao)
-                .should(times(1))
-                .findAll();
+        then(productDao).should(times(1)).findAll();
     }
 }
 
