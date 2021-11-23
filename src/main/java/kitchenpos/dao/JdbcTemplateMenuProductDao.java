@@ -1,13 +1,14 @@
 package kitchenpos.dao;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -15,7 +16,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
     private static final String TABLE_NAME = "menu_product";
     private static final String KEY_COLUMN_NAME = "seq";
@@ -69,11 +69,18 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuProduct entity = new MenuProduct();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setProductId(resultSet.getLong("product_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        Menu menu = Menu.builder()
+                .id(resultSet.getLong("menu_id"))
+                .build();
+        Product product = Product.builder()
+                .id(resultSet.getLong("product_id"))
+                .build();
+
+        return MenuProduct.builder()
+                .seq(resultSet.getLong(KEY_COLUMN_NAME))
+                .menu(menu)
+                .product(product)
+                .quantity(resultSet.getLong("quantity"))
+                .build();
     }
 }
