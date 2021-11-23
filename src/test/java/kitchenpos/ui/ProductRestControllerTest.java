@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.testutils.TestDomainBuilder.productBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
@@ -45,12 +45,16 @@ class ProductRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        Product newProduct = productBuilder()
+        ProductRequest productRequest = new ProductRequest(
+                null,
+                "후라이드",
+                BigDecimal.valueOf(16000)
+        );
+        Product newProduct = Product.builder()
                 .name("후라이드")
                 .price(BigDecimal.valueOf(16000))
                 .build();
-
-        Product expectedProduct = productBuilder()
+        Product expectedProduct = Product.builder()
                 .id(1L)
                 .name("후라이드")
                 .price(BigDecimal.valueOf(16000))
@@ -59,26 +63,22 @@ class ProductRestControllerTest {
         given(productService.create(refEq(newProduct))).willReturn(expectedProduct);
 
         // when
-        MockHttpServletResponse response =
-                mockMvc.perform(postApiProducts(newProduct))
-                        .andReturn()
-                        .getResponse();
-
-        String responseBody = response.getContentAsString(Charset.defaultCharset());
+        MockHttpServletResponse response = mockMvc.perform(postApiProducts(productRequest))
+                .andReturn()
+                .getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getHeader("location")).isEqualTo("/api/products/" + expectedProduct.getId());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
-        assertThat(responseBody).isEqualTo(objectMapper.writeValueAsString(expectedProduct));
 
         then(productService).should(times(1)).create(refEq(newProduct));
     }
 
-    private RequestBuilder postApiProducts(Product newProduct) throws JsonProcessingException {
+    private RequestBuilder postApiProducts(ProductRequest productRequest) throws JsonProcessingException {
         return post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newProduct));
+                .content(objectMapper.writeValueAsString(productRequest));
     }
 
     @DisplayName("GET /api/products - 상품의 리스트를 가져온다. (list)")
@@ -86,24 +86,20 @@ class ProductRestControllerTest {
     void list() throws Exception {
         // given
         List<Product> expectedProducts = Arrays.asList(
-                productBuilder().id(1L).name("후라이드").price(BigDecimal.valueOf(16000)).build(),
-                productBuilder().id(2L).name("양념치킨").price(BigDecimal.valueOf(16000)).build(),
-                productBuilder().id(3L).name("반반치킨").price(BigDecimal.valueOf(16000)).build()
+                Product.builder().id(1L).name("후라이드").price(BigDecimal.valueOf(16000)).build(),
+                Product.builder().id(2L).name("양념치킨").price(BigDecimal.valueOf(16000)).build(),
+                Product.builder().id(3L).name("반반치킨").price(BigDecimal.valueOf(16000)).build()
         );
 
         given(productService.list()).willReturn(expectedProducts);
 
         // when
-        MockHttpServletResponse response =
-                mockMvc.perform(getApiProducts())
-                        .andReturn()
-                        .getResponse();
-
-        String responseBody = response.getContentAsString(Charset.defaultCharset());
+        MockHttpServletResponse response = mockMvc.perform(getApiProducts())
+                .andReturn()
+                .getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(responseBody).isEqualTo(objectMapper.writeValueAsString(expectedProducts));
 
         then(productService).should(times(1)).list();
     }

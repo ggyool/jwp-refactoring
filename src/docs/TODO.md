@@ -10,7 +10,7 @@
   - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] RestController 리팩터링 / Request 생성 / Response 생성
   - [x] MenuGroup
-  - [ ] Product
+  - [x] Product
   - [ ] MenuRest
   - [ ] Order
   - [ ] TableGroup
