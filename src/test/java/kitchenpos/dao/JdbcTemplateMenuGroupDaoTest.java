@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,9 @@ import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.testutils.TestDomainBuilder.menuGroupBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @Import(JdbcTemplateMenuGroupDao.class)
 class JdbcTemplateMenuGroupDaoTest extends AbstractJdbcTemplateDaoTest {
 
@@ -26,10 +27,10 @@ class JdbcTemplateMenuGroupDaoTest extends AbstractJdbcTemplateDaoTest {
     @BeforeEach
     void setUp() {
         doubleQuantityMenuGroup = menuGroupDao.save(
-                menuGroupBuilder().name("두마리메뉴").build()
+                MenuGroup.builder().name("두마리메뉴").build()
         );
         singleQuantityMenuGroup = menuGroupDao.save(
-                menuGroupBuilder().name("한마리메뉴").build()
+                MenuGroup.builder().name("한마리메뉴").build()
         );
     }
 
@@ -38,7 +39,7 @@ class JdbcTemplateMenuGroupDaoTest extends AbstractJdbcTemplateDaoTest {
     void save() {
         // given
         String name = "순살파닭두마리메뉴";
-        MenuGroup newMenuGroup = menuGroupBuilder().name(name).build();
+        MenuGroup newMenuGroup = MenuGroup.builder().name(name).build();
 
         // when
         MenuGroup menuGroup = menuGroupDao.save(newMenuGroup);

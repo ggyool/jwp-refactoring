@@ -1,9 +1,12 @@
 package kitchenpos.dao;
 
+
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,9 @@ import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.testutils.TestDomainBuilder.menuProductBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @Import(JdbcTemplateMenuProductDao.class)
 class JdbcTemplateMenuProductDaoTest extends AbstractJdbcTemplateDaoTest {
 
@@ -35,16 +38,24 @@ class JdbcTemplateMenuProductDaoTest extends AbstractJdbcTemplateDaoTest {
         turnOffReferentialIntegrity();
 
         friedChickenMenuProduct = menuProductDao.save(
-                menuProductBuilder()
-                        .menuId(friedChickenMenuId)
-                        .productId(friedChickenProductId)
+                MenuProduct.builder()
+                        .menu(
+                                Menu.builder().id(friedChickenMenuId).build()
+                        )
+                        .product(
+                                Product.builder().id(friedChickenProductId).build()
+                        )
                         .quantity(1)
                         .build()
         );
         seasoningChickenMenuProduct = menuProductDao.save(
-                menuProductBuilder()
-                        .menuId(seasoningChickenMenuId)
-                        .productId(seasoningChickenProductId)
+                MenuProduct.builder()
+                        .menu(
+                                Menu.builder().id(seasoningChickenMenuId).build()
+                        )
+                        .product(
+                                Product.builder().id(seasoningChickenProductId).build()
+                        )
                         .quantity(1)
                         .build()
         );
@@ -59,9 +70,13 @@ class JdbcTemplateMenuProductDaoTest extends AbstractJdbcTemplateDaoTest {
     @Test
     void save() {
         // given
-        MenuProduct newMenuProduct = menuProductBuilder()
-                .menuId(friedChickenMenuId)
-                .productId(friedChickenProductId)
+        MenuProduct newMenuProduct = MenuProduct.builder()
+                .menu(
+                        Menu.builder().id(friedChickenMenuId).build()
+                )
+                .product(
+                        Product.builder().id(friedChickenProductId).build()
+                )
                 .quantity(2)
                 .build();
 
@@ -106,9 +121,7 @@ class JdbcTemplateMenuProductDaoTest extends AbstractJdbcTemplateDaoTest {
     void findAll() {
         // when
         List<MenuProduct> menuProducts = menuProductDao.findAll();
-        for (MenuProduct menuProduct : menuProducts) {
-            System.out.println(menuProduct.getMenuId());
-        }
+
         // then
         assertThat(menuProducts)
                 .usingRecursiveFieldByFieldElementComparator()

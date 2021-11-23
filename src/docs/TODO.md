@@ -1,6 +1,6 @@
 ## step2 작업 목록
 - [ ] DAO 를 Repository 로 migration
-    - [ ] Product, Menu, MenuGroup, MenuProduct
+    - [x] Product, Menu, MenuGroup, MenuProduct
     - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] 도메인 Entity 로 변경
   - [x] Product, Menu, MenuGroup, MenuProduct
