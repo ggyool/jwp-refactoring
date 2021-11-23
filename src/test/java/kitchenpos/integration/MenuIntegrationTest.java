@@ -1,7 +1,11 @@
 package kitchenpos.integration;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.request.MenuProductRequest;
+import kitchenpos.request.MenuRequest;
+import kitchenpos.response.MenuProductResponse;
+import kitchenpos.response.MenuResponse;
+import kitchenpos.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,8 +18,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.testutils.TestDomainBuilder.menuBuilder;
-import static kitchenpos.testutils.TestDomainBuilder.menuProductBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MenuIntegrationTest extends AbstractIntegrationTest {
@@ -29,66 +31,64 @@ public class MenuIntegrationTest extends AbstractIntegrationTest {
         Long friedChickenProductId = 1L;
         Long doubleChickenMenuGroupId = 1L;
 
-        MenuProduct newMenuProduct = menuProductBuilder()
-                .productId(friedChickenProductId)
-                .quantity(2)
-                .build();
-        Menu newMenu = menuBuilder()
-                .name(name)
-                .price(price)
-                .menuGroupId(doubleChickenMenuGroupId)
-                .menuProducts(Collections.singletonList(newMenuProduct))
-                .build();
+        MenuProductRequest menuProductRequest = new MenuProductRequest(
+                friedChickenProductId,
+                2L
+        );
+        MenuRequest menuRequest = new MenuRequest(
+                name,
+                price,
+                doubleChickenMenuGroupId,
+                Collections.singletonList(menuProductRequest)
+        );
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         // when
-        ResponseEntity<Menu> responseEntity = post(
+        ResponseEntity<MenuResponse> responseEntity = post(
                 "/api/menus",
                 httpHeaders,
-                newMenu,
-                new ParameterizedTypeReference<Menu>() {
+                menuRequest,
+                new ParameterizedTypeReference<MenuResponse>() {
                 }
         );
-        Menu createdMenu = responseEntity.getBody();
+        MenuResponse menuResponse = responseEntity.getBody();
 
         // then
-        assertThat(createdMenu).isNotNull();
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(extractLocation(responseEntity)).isEqualTo("/api/menus/" + createdMenu.getId());
-        assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getName()).isEqualTo(name);
-        assertThat(createdMenu.getPrice()).isEqualByComparingTo(price);
-        assertThat(createdMenu.getMenuGroupId()).isEqualByComparingTo(doubleChickenMenuGroupId);
-
-        assertThat(createdMenu.getMenuProducts())
-                .extracting(MenuProduct::getSeq)
+        assertThat(menuResponse).isNotNull();
+        assertThat(menuResponse.getId()).isNotNull();
+        assertThat(menuResponse.getName()).isEqualTo(name);
+        assertThat(menuResponse.getPrice()).isEqualByComparingTo(price);
+        assertThat(menuResponse.getMenuGroupResponse().getId()).isEqualByComparingTo(doubleChickenMenuGroupId);
+        assertThat(menuResponse.getMenuProducts())
+                .extracting(MenuProductResponse::getSeq)
                 .hasSize(1);
-        assertThat(createdMenu.getMenuProducts())
-                .extracting(MenuProduct::getProductId)
+        assertThat(menuResponse.getMenuProducts())
+                .extracting(MenuProductResponse::getProduct)
+                .extracting(ProductResponse::getId)
                 .containsExactly(friedChickenProductId);
-        assertThat(createdMenu.getMenuProducts())
-                .extracting(MenuProduct::getMenuId)
-                .containsExactly(createdMenu.getId());
-        assertThat(createdMenu.getMenuProducts())
-                .extracting(MenuProduct::getQuantity)
+        assertThat(menuResponse.getMenuProducts())
+                .extracting(MenuProductResponse::getQuantity)
                 .containsExactly(2L);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(extractLocation(responseEntity)).isEqualTo("/api/menus/" + menuResponse.getId());
     }
 
     @DisplayName("GET /api/menus - 전체 메뉴의 리스트를 가져온다.")
     @Test
     void list() {
         // when
-        ResponseEntity<List<Menu>> responseEntity = get(
+        ResponseEntity<List<MenuResponse>> responseEntity = get(
                 "/api/menus",
-                new ParameterizedTypeReference<List<Menu>>() {
+                new ParameterizedTypeReference<List<MenuResponse>>() {
                 }
         );
-        List<Menu> menus = responseEntity.getBody();
+        List<MenuResponse> menuResponses = responseEntity.getBody();
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(menus).hasSize(6);
+        assertThat(menuResponses).hasSize(6);
     }
 }
