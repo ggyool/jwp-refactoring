@@ -1,12 +1,29 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
+
+    protected TableGroup() {
+    }
 
     public Long getId() {
         return id;
@@ -30,5 +47,39 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Long id;
+        private LocalDateTime createdDate;
+        private List<OrderTable> orderTables;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder createdDate(LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public Builder orderTables(List<OrderTable> orderTables) {
+            this.orderTables = orderTables;
+            return this;
+        }
+
+        public TableGroup build() {
+            TableGroup tableGroup = new TableGroup();
+            tableGroup.setId(id);
+            tableGroup.setCreatedDate(createdDate);
+            tableGroup.setOrderTables(orderTables);
+            return tableGroup;
+        }
     }
 }

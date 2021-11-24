@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static kitchenpos.testutils.TestDomainBuilder.orderBuilder;
 import static kitchenpos.testutils.TestDomainBuilder.orderLineItemBuilder;
-import static kitchenpos.testutils.TestDomainBuilder.orderTableBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,12 +57,12 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = orderTableBuilder()
+        orderTable = OrderTable.builder()
                 .id(1L)
                 .numberOfGuests(0)
                 .empty(false)
                 .build();
-        emptyTable = orderTableBuilder()
+        emptyTable = OrderTable.builder()
                 .id(2L)
                 .numberOfGuests(0)
                 .empty(true)

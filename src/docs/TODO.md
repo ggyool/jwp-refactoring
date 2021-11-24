@@ -3,11 +3,11 @@
     - [x] Product, Menu, MenuGroup, MenuProduct
     - [ ] Order, OrderLineItem, OrderTable, TableGroup
 - [ ] 도메인 Entity 로 변경
-  - [x] Product, Menu, MenuGroup, MenuProduct
-  - [ ] Order, OrderLineItem, OrderTable, TableGroup
+  - [x] Product, Menu, MenuGroup, MenuProduct, OrderTable, TableGroup
+  - [ ] Order, OrderLineItem
 - [ ] 엔티티에 Builder 추가
-  - [x] Product, Menu, MenuGroup, MenuProduct
-  - [ ] Order, OrderLineItem, OrderTable, TableGroup
+  - [x] Product, Menu, MenuGroup, MenuProduct, OrderTable, TableGroup
+  - [ ] Order, OrderLineItem
 - [ ] RestController 리팩터링 / Request 생성 / Response 생성
   - [x] MenuGroup
   - [x] Product

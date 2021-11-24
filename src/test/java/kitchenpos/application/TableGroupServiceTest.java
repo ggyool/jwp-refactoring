@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.testutils.TestDomainBuilder.orderTableBuilder;
-import static kitchenpos.testutils.TestDomainBuilder.tableGroupBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,23 +45,23 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Arrays.asList(
-                        orderTableBuilder().id(1L).build(),
-                        orderTableBuilder().id(2L).build()
+                        OrderTable.builder().id(1L).build(),
+                        OrderTable.builder().id(2L).build()
                 ))
                 .build();
 
-        OrderTable savedOrderTable1 = orderTableBuilder()
+        OrderTable savedOrderTable1 = OrderTable.builder()
                 .id(1L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
-        OrderTable savedOrderTable2 = orderTableBuilder()
+        OrderTable savedOrderTable2 = OrderTable.builder()
                 .id(2L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
         List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
@@ -75,7 +73,7 @@ class TableGroupServiceTest {
 
         // then
         assertThat(savedTableGroup.getCreatedDate()).isNotNull();
-        assertThat(savedOrderTables).extracting(OrderTable::getTableGroupId).doesNotContainNull();
+        assertThat(savedOrderTables).extracting(OrderTable::getTableGroup).doesNotContainNull();
         assertThat(savedOrderTables).extracting(OrderTable::isEmpty).containsExactly(false, false);
         assertThat(savedTableGroup.getOrderTables()).isNotNull();
 
@@ -88,10 +86,10 @@ class TableGroupServiceTest {
     @Test
     void createWhenLessTable() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Collections.singletonList(
-                        orderTableBuilder().id(1L).build()
+                        OrderTable.builder().id(1L).build()
                 ))
                 .build();
 
@@ -107,18 +105,18 @@ class TableGroupServiceTest {
     @Test
     void createWhenHasNonExistentTable() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Arrays.asList(
-                        orderTableBuilder().id(1L).build(),
-                        orderTableBuilder().id(NON_EXISTENT_ID).build()
+                        OrderTable.builder().id(1L).build(),
+                        OrderTable.builder().id(NON_EXISTENT_ID).build()
                 ))
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(1L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
         List<OrderTable> savedOrderTables = Collections.singletonList(savedOrderTable);
 
@@ -136,18 +134,18 @@ class TableGroupServiceTest {
     @Test
     void createWhenHasDuplicatedTable() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Arrays.asList(
-                        orderTableBuilder().id(1L).build(),
-                        orderTableBuilder().id(1L).build()
+                        OrderTable.builder().id(1L).build(),
+                        OrderTable.builder().id(1L).build()
                 ))
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(1L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
         List<OrderTable> savedOrderTables = Collections.singletonList(savedOrderTable);
 
@@ -165,23 +163,23 @@ class TableGroupServiceTest {
     @Test
     void createWhenHasNotEmptyTable() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Arrays.asList(
-                        orderTableBuilder().id(1L).build(),
-                        orderTableBuilder().id(2L).build()
+                        OrderTable.builder().id(1L).build(),
+                        OrderTable.builder().id(2L).build()
                 ))
                 .build();
 
-        OrderTable savedOrderTable1 = orderTableBuilder()
+        OrderTable savedOrderTable1 = OrderTable.builder()
                 .id(1L)
                 .empty(false)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
-        OrderTable savedOrderTable2 = orderTableBuilder()
+        OrderTable savedOrderTable2 = OrderTable.builder()
                 .id(2L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
         List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
@@ -199,23 +197,25 @@ class TableGroupServiceTest {
     @Test
     void createWhenHasGroupTable() {
         // given
-        TableGroup tableGroup = tableGroupBuilder()
+        TableGroup tableGroup = TableGroup.builder()
                 .id(1L)
                 .orderTables(Arrays.asList(
-                        orderTableBuilder().id(1L).build(),
-                        orderTableBuilder().id(2L).build()
+                        OrderTable.builder().id(1L).build(),
+                        OrderTable.builder().id(2L).build()
                 ))
                 .build();
 
-        OrderTable savedOrderTable1 = orderTableBuilder()
+        OrderTable savedOrderTable1 = OrderTable.builder()
                 .id(1L)
                 .empty(true)
-                .tableGroupId(1L)
+                .tableGroup(
+                        TableGroup.builder().id(1L).build()
+                )
                 .build();
-        OrderTable savedOrderTable2 = orderTableBuilder()
+        OrderTable savedOrderTable2 = OrderTable.builder()
                 .id(2L)
                 .empty(true)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .build();
         List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
@@ -235,13 +235,17 @@ class TableGroupServiceTest {
         // given
         Long tableGroupId = 1L;
 
-        OrderTable savedOrderTable1 = orderTableBuilder()
+        OrderTable savedOrderTable1 = OrderTable.builder()
                 .id(1L)
-                .tableGroupId(tableGroupId)
+                .tableGroup(
+                        TableGroup.builder().id(tableGroupId).build()
+                )
                 .build();
-        OrderTable savedOrderTable2 = orderTableBuilder()
+        OrderTable savedOrderTable2 = OrderTable.builder()
                 .id(2L)
-                .tableGroupId(tableGroupId)
+                .tableGroup(
+                        TableGroup.builder().id(tableGroupId).build()
+                )
                 .build();
         List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
@@ -252,7 +256,7 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(tableGroupId);
 
         // then
-        assertThat(savedOrderTables).extracting(OrderTable::getTableGroupId).containsExactly(null, null);
+        assertThat(savedOrderTables).extracting(OrderTable::getTableGroup).containsExactly(null, null);
         assertThat(savedOrderTables).extracting(OrderTable::isEmpty).containsExactly(false, false);
 
         then(orderTableDao).should(times(1)).findAllByTableGroupId(tableGroupId);
@@ -267,13 +271,17 @@ class TableGroupServiceTest {
         // given
         Long tableGroupId = 1L;
 
-        OrderTable savedOrderTable1 = orderTableBuilder()
+        OrderTable savedOrderTable1 = OrderTable.builder()
                 .id(1L)
-                .tableGroupId(tableGroupId)
+                .tableGroup(
+                        TableGroup.builder().id(tableGroupId).build()
+                )
                 .build();
-        OrderTable savedOrderTable2 = orderTableBuilder()
+        OrderTable savedOrderTable2 = OrderTable.builder()
                 .id(2L)
-                .tableGroupId(tableGroupId)
+                .tableGroup(
+                        TableGroup.builder().id(tableGroupId).build()
+                )
                 .build();
         List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 

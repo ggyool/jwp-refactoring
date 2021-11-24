@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.Optional;
 
-import static kitchenpos.testutils.TestDomainBuilder.orderTableBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +40,7 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        OrderTable newOrderTable = orderTableBuilder()
+        OrderTable newOrderTable = OrderTable.builder()
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
@@ -67,13 +67,13 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         Long orderTableId = 1L;
-        OrderTable nonEmptyTable = orderTableBuilder()
+        OrderTable nonEmptyTable = OrderTable.builder()
                 .empty(false)
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(orderTableId)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .empty(true)
                 .build();
 
@@ -97,7 +97,7 @@ class TableServiceTest {
     @Test
     void changeEmptyWhenNonExistentTable() {
         // given
-        OrderTable nonEmptyTable = orderTableBuilder()
+        OrderTable nonEmptyTable = OrderTable.builder()
                 .empty(false)
                 .build();
 
@@ -115,13 +115,15 @@ class TableServiceTest {
     void changeEmptyWhenGroupTable() {
         // given
         Long orderTableId = 1L;
-        OrderTable nonEmptyTable = orderTableBuilder()
+        OrderTable nonEmptyTable = OrderTable.builder()
                 .empty(false)
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(orderTableId)
-                .tableGroupId(1L)
+                .tableGroup(
+                        TableGroup.builder().id(1L).build()
+                )
                 .empty(true)
                 .build();
 
@@ -139,13 +141,13 @@ class TableServiceTest {
     void changeEmptyWhenExistentNotCompletedOrder() {
         // given
         Long orderTableId = 1L;
-        OrderTable nonEmptyTable = orderTableBuilder()
+        OrderTable nonEmptyTable = OrderTable.builder()
                 .empty(false)
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(orderTableId)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .empty(true)
                 .build();
 
@@ -164,11 +166,11 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         Long orderTableId = 1L;
-        OrderTable expectedNumberTable = orderTableBuilder()
+        OrderTable expectedNumberTable = OrderTable.builder()
                 .numberOfGuests(4)
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(orderTableId)
                 .empty(false)
                 .build();
@@ -191,7 +193,7 @@ class TableServiceTest {
     void changeNumberOfGuestsWhenNegativeNumber() {
         // given
         Long orderTableId = 1L;
-        OrderTable expectedNumberTable = orderTableBuilder()
+        OrderTable expectedNumberTable = OrderTable.builder()
                 .numberOfGuests(-1)
                 .build();
 
@@ -206,7 +208,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWhenNonExistentTable() {
         // given
-        OrderTable expectedNumberTable = orderTableBuilder()
+        OrderTable expectedNumberTable = OrderTable.builder()
                 .numberOfGuests(4)
                 .build();
 
@@ -224,11 +226,11 @@ class TableServiceTest {
     void changeNumberOfGuestsWhenEmptyTable() {
         // given
         Long orderTableId = 1L;
-        OrderTable expectedNumberTable = orderTableBuilder()
+        OrderTable expectedNumberTable = OrderTable.builder()
                 .numberOfGuests(4)
                 .build();
 
-        OrderTable savedOrderTable = orderTableBuilder()
+        OrderTable savedOrderTable = OrderTable.builder()
                 .id(orderTableId)
                 .empty(true)
                 .build();
