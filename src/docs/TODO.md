@@ -1,13 +1,7 @@
 ## step2 작업 목록
-- [ ] DAO 를 Repository 로 migration
-    - [x] Product, Menu, MenuGroup, MenuProduct, OrderTable, TableGroup
-    - [ ] Order, OrderLineItem
-- [ ] 도메인 Entity 로 변경
-  - [x] Product, Menu, MenuGroup, MenuProduct, OrderTable, TableGroup
-  - [ ] Order, OrderLineItem
-- [ ] 엔티티에 Builder 추가
-  - [x] Product, Menu, MenuGroup, MenuProduct, OrderTable, TableGroup
-  - [ ] Order, OrderLineItem
+- [x] DAO 를 Repository 로 migration
+- [x] 도메인 Entity 로 변경
+- [x] 엔티티에 Builder 추가
 - [ ] RestController 리팩터링 / Request 생성 / Response 생성
   - [x] MenuGroup
   - [x] Product
@@ -16,3 +10,4 @@
   - [ ] TableGroup
   - [ ] Table
 - [ ] 엔티티에 setter 제거
+- [ ] LocalDateTime 신경쓰기

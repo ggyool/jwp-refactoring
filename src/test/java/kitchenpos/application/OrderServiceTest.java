@@ -4,6 +4,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -20,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.testutils.TestDomainBuilder.orderBuilder;
-import static kitchenpos.testutils.TestDomainBuilder.orderLineItemBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,17 +73,23 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        OrderLineItem newOrderLineItem1 = orderLineItemBuilder()
-                .menuId(1L)
+        OrderLineItem newOrderLineItem1 = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(1L).build()
+                )
                 .quantity(1L)
                 .build();
-        OrderLineItem newOrderLineItem2 = orderLineItemBuilder()
-                .menuId(2L)
+        OrderLineItem newOrderLineItem2 = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(2L).build()
+                )
                 .quantity(2L)
                 .build();
 
-        Order newOrder = orderBuilder()
-                .orderTableId(orderTableId)
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(orderTableId).build()
+                )
                 .orderLineItems(Arrays.asList(newOrderLineItem1, newOrderLineItem2))
                 .build();
 
@@ -99,8 +104,8 @@ class OrderServiceTest {
         Order order = orderService.create(newOrder);
 
         // then
-        assertThat(order.getOrderTableId()).isNotNull();
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(order.getOrderTable()).isNotNull();
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(order.getOrderedTime()).isNotNull();
         assertThat(order.getOrderLineItems()).isNotNull();
 
@@ -114,8 +119,10 @@ class OrderServiceTest {
     @Test
     void createWithEmptyOrderLineItems() {
         // given
-        Order newOrder = orderBuilder()
-                .orderTableId(orderTableId)
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(orderTableId).build()
+                )
                 .orderLineItems(Collections.emptyList())
                 .build();
 
@@ -131,12 +138,16 @@ class OrderServiceTest {
     @Test
     void createWithNonexistentMenu() {
         // given
-        OrderLineItem newOrderLineItem = orderLineItemBuilder()
-                .menuId(NON_EXISTENT_ID)
+        OrderLineItem newOrderLineItem = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(NON_EXISTENT_ID).build()
+                )
                 .quantity(1L)
                 .build();
-        Order newOrder = orderBuilder()
-                .orderTableId(orderTableId)
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(orderTableId).build()
+                )
                 .orderLineItems(Collections.singletonList(newOrderLineItem))
                 .build();
 
@@ -154,12 +165,16 @@ class OrderServiceTest {
     @Test
     void createWithDuplicatedMenu() {
         // given
-        OrderLineItem newOrderLineItem = orderLineItemBuilder()
-                .menuId(1L)
+        OrderLineItem newOrderLineItem = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(1L).build()
+                )
                 .quantity(1L)
                 .build();
-        Order newOrder = orderBuilder()
-                .orderTableId(orderTableId)
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(orderTableId).build()
+                )
                 .orderLineItems(Arrays.asList(newOrderLineItem, newOrderLineItem))
                 .build();
 
@@ -177,12 +192,16 @@ class OrderServiceTest {
     @Test
     void createWithNonexistentOrderTable() {
         // given
-        OrderLineItem newOrderLineItem = orderLineItemBuilder()
-                .menuId(1L)
+        OrderLineItem newOrderLineItem = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(1L).build()
+                )
                 .quantity(1L)
                 .build();
-        Order newOrder = orderBuilder()
-                .orderTableId(NON_EXISTENT_ID)
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(NON_EXISTENT_ID).build()
+                )
                 .orderLineItems(Collections.singletonList(newOrderLineItem))
                 .build();
 
@@ -201,12 +220,16 @@ class OrderServiceTest {
     @Test
     void createWithEmptyTable() {
         // given
-        OrderLineItem newOrderLineItem = orderLineItemBuilder()
-                .menuId(1L)
+        OrderLineItem newOrderLineItem = OrderLineItem.builder()
+                .menu(
+                        Menu.builder().id(1L).build()
+                )
                 .quantity(1L)
                 .build();
-        Order newOrder = orderBuilder()
-                .orderTableId(emptyTable.getId())
+        Order newOrder = Order.builder()
+                .orderTable(
+                        OrderTable.builder().id(emptyTable.getId()).build()
+                )
                 .orderLineItems(Collections.singletonList(newOrderLineItem))
                 .build();
 
@@ -225,13 +248,13 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        Order order1 = orderBuilder()
+        Order order1 = Order.builder()
                 .id(1L)
                 .build();
-        Order order2 = orderBuilder()
+        Order order2 = Order.builder()
                 .id(2L)
                 .build();
-        OrderLineItem orderLineItem = orderLineItemBuilder()
+        OrderLineItem orderLineItem = OrderLineItem.builder()
                 .build();
 
 
@@ -255,14 +278,18 @@ class OrderServiceTest {
         // given
         Long orderId = 1L;
         OrderStatus orderStatus = OrderStatus.MEAL;
-        Order newOrder = orderBuilder().orderStatus(orderStatus.name()).build();
-
-        Order savedOrder = orderBuilder()
-                .id(orderId)
-                .orderStatus(OrderStatus.COOKING.name())
+        Order newOrder = Order.builder()
+                .orderStatus(orderStatus)
                 .build();
-        OrderLineItem savedOrderLineItem = orderLineItemBuilder()
-                .orderId(orderId)
+
+        Order savedOrder = Order.builder()
+                .id(orderId)
+                .orderStatus(OrderStatus.COOKING)
+                .build();
+        OrderLineItem savedOrderLineItem = OrderLineItem.builder()
+                .order(
+                        Order.builder().id(orderId).build()
+                )
                 .build();
 
         given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
@@ -274,7 +301,7 @@ class OrderServiceTest {
         Order order = orderService.changeOrderStatus(orderId, newOrder);
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
         assertThat(order.getOrderLineItems()).isNotNull();
 
         then(orderDao).should(times(1)).findById(orderId);
@@ -287,7 +314,9 @@ class OrderServiceTest {
     void changeOrderStatusWhenNonexistentOrder() {
         // given
         OrderStatus orderStatus = OrderStatus.MEAL;
-        Order newOrder = orderBuilder().orderStatus(orderStatus.name()).build();
+        Order newOrder = Order.builder()
+                .orderStatus(orderStatus)
+                .build();
 
         given(orderDao.findById(NON_EXISTENT_ID)).willReturn(Optional.empty());
 
@@ -304,11 +333,13 @@ class OrderServiceTest {
         // given
         Long orderId = 1L;
         OrderStatus orderStatus = OrderStatus.MEAL;
-        Order newOrder = orderBuilder().orderStatus(orderStatus.name()).build();
+        Order newOrder = Order.builder()
+                .orderStatus(orderStatus)
+                .build();
 
-        Order savedOrder = orderBuilder()
+        Order savedOrder = Order.builder()
                 .id(orderId)
-                .orderStatus(OrderStatus.COMPLETION.name())
+                .orderStatus(OrderStatus.COMPLETION)
                 .build();
 
         given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
